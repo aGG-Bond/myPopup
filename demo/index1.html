@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Popup Component 移动端 Demo & API 文档</title>
+  <style>
+    html, body { margin: 0; padding: 0; box-sizing: border-box; background: #f7f7f7; }
+    body { font-family: "PingFang SC", Arial, sans-serif; padding: 16px; }
+    h1 { font-size: 5vw; margin-bottom: 2vw; }
+    h2 { font-size: 4vw; margin-top: 6vw; }
+    .demo-group { margin-bottom: 6vw; display: flex; flex-direction: column; gap: 2vw; }
+    .example { background: #fff; border: 1px solid #ddd; padding: 3vw; margin-bottom: 4vw; border-radius: 3vw; box-shadow: 0 2px 8px rgba(0,0,0,0.03);}
+    .example label { display: block; margin: 2vw 0 1vw 0; font-size: 3vw;}
+    .example input, .example textarea, .example select {
+      width: 100%; font-size: 3vw; padding: 1vw; margin-bottom: 2vw; border-radius: 2vw; border: 1px solid #ccc; box-sizing: border-box;
+    }
+    .example textarea { min-height: 8vw; }
+    .example button { padding: 2vw; font-size: 4vw; border-radius: 2vw; border: none; background: #2196f3; color: #fff; margin-top: 2vw;}
+    .example button:active { background: #1976d2; }
+    pre, code { background: #eee; padding: 1vw 2vw; border-radius: 2vw; font-size: 3vw; overflow-x: auto; }
+    .api-table { border-collapse: collapse; width: 100%; font-size: 3vw; margin-top: 2vw; }
+    .api-table th, .api-table td { border: 1px solid #ccc; padding: 2vw 1vw; text-align: left; }
+    .api-table th { background: #e0e0e0; }
+    @media (max-width: 500px) {
+      h1 { font-size: 7vw; }
+      h2 { font-size: 5vw; }
+      .example input, .example textarea, .example select { font-size: 4vw; }
+      .api-table { font-size: 4vw; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Popup Component 移动端演示与 API 文档</h1>
+
+  <div class="demo-group">
+    <button onclick="document.getElementById('alert-demo').scrollIntoView({behavior:'smooth'})">alert 弹窗</button>
+    <button onclick="document.getElementById('tips-demo').scrollIntoView({behavior:'smooth'})">tips 弹窗</button>
+    <button onclick="document.getElementById('msg-demo').scrollIntoView({behavior:'smooth'})">msg 消息</button>
+    <button onclick="document.getElementById('confirm-demo').scrollIntoView({behavior:'smooth'})">confirm 确认框</button>
+    <button onclick="document.getElementById('image-demo').scrollIntoView({behavior:'smooth'})">图片预览</button>
+    <button onclick="document.getElementById('bottom-demo').scrollIntoView({behavior:'smooth'})">底部弹窗</button>
+    <button onclick="document.getElementById('loading-demo').scrollIntoView({behavior:'smooth'})">loading 加载</button>
+  </div>
+
+  <h2>API 一览</h2>
+  <table class="api-table">
+    <tr>
+      <th>方法</th>
+      <th>说明</th>
+      <th>主要参数</th>
+    </tr>
+    <tr>
+      <td><code>alert(options)</code></td>
+      <td>弹出带按钮的提示框</td>
+      <td>
+        <code>title</code>：标题<br>
+        <code>content</code>：内容<br>
+        <code>btns</code>：按钮数组<br>
+        <code>callbacks</code>：按钮回调数组
+      </td>
+    </tr>
+    <tr>
+      <td><code>tips(options, callback, color)</code></td>
+      <td>弹出带确认按钮的提示</td>
+      <td>
+        <code>title</code>、<code>content</code>、<code>callback</code>、<code>color</code>
+      </td>
+    </tr>
+    <tr>
+      <td><code>msg(content, options)</code></td>
+      <td>消息提示（自动消失）</td>
+      <td>
+        <code>content</code>：消息内容<br>
+        <code>time</code>：显示时长<br>
+        <code>icon</code>：图标类型
+      </td>
+    </tr>
+    <tr>
+      <td><code>confirm(info, obj, cb1, cb2)</code></td>
+      <td>确认框</td>
+      <td>
+        <code>info</code>：内容和标题<br>
+        <code>obj</code>：按钮和颜色配置<br>
+        <code>cb1</code>、<code>cb2</code>：回调
+      </td>
+    </tr>
+    <tr>
+      <td><code>showImagePreview(options)</code></td>
+      <td>图片预览弹窗</td>
+      <td>
+        <code>imgUrl</code>：图片地址<br>
+        <code>onClose</code>：关闭回调
+      </td>
+    </tr>
+    <tr>
+      <td><code>showBottomPopup(options)</code></td>
+      <td>底部弹窗</td>
+      <td>
+        <code>title</code>、<code>content</code>、<code>btns</code>、<code>callbacks</code>
+      </td>
+    </tr>
+    <tr>
+      <td><code>load(options)</code></td>
+      <td>加载动画弹窗</td>
+      <td>
+        <code>width</code>、<code>height</code>、<code>color</code>
+      </td>
+    </tr>
+    <tr>
+      <td><code>close()</code></td>
+      <td>关闭弹窗</td>
+      <td>无</td>
+    </tr>
+  </table>
+
+  <h2>使用示例（可自定义参数）</h2>
+
+  <div class="example" id="alert-demo">
+    <strong>alert 弹窗：</strong>
+    <label>标题 <input id="alert-title" value="提示"></label>
+    <label>内容 <input id="alert-content" value="这是一个 alert 弹窗"></label>
+    <label>按钮（英文逗号分隔） <input id="alert-btns" value="确定,取消"></label>
+    <button onclick="runAlertDemo()">运行示例</button>
+  </div>
+
+  <div class="example" id="tips-demo">
+    <strong>tips 弹窗：</strong>
+    <label>标题 <input id="tips-title" value="温馨提示"></label>
+    <label>内容 <input id="tips-content" value="操作成功！"></label>
+    <label>按钮颜色（英文逗号分隔） <input id="tips-color" value="#4caf50,#81c784"></label>
+    <button onclick="runTipsDemo()">运行示例</button>
+  </div>
+
+  <div class="example" id="msg-demo">
+    <strong>msg 消息：</strong>
+    <label>内容 <input id="msg-content" value="这是一个消息提示"></label>
+    <label>显示时长(ms) <input id="msg-time" type="number" value="1500"></label>
+    <button onclick="runMsgDemo()">运行示例</button>
+  </div>
+
+  <div class="example" id="confirm-demo">
+    <strong>confirm 确认框：</strong>
+    <label>标题 <input id="confirm-title" value="确认操作"></label>
+    <label>内容 <input id="confirm-content" value="你确定要继续吗？"></label>
+    <label>按钮（英文逗号分隔） <input id="confirm-btns" value="确定,取消"></label>
+    <label>按钮颜色（英文逗号分隔） <input id="confirm-color" value="#2196f3,#21cbf3"></label>
+    <button onclick="runConfirmDemo()">运行示例</button>
+  </div>
+
+  <div class="example" id="image-demo">
+    <strong>图片预览：</strong>
+    <label>图片地址 <input id="image-url" value="https://placekitten.com/300/200"></label>
+    <button onclick="runImageDemo()">运行示例</button>
+  </div>
+
+  <div class="example" id="bottom-demo">
+    <strong>底部弹窗：</strong>
+    <label>标题 <input id="bottom-title" value="底部弹窗"></label>
+    <label>内容 <input id="bottom-content" value="这是底部弹窗内容"></label>
+    <label>按钮（英文逗号分隔） <input id="bottom-btns" value="确定,取消"></label>
+    <button onclick="runBottomDemo()">运行示例</button>
+  </div>
+
+  <div class="example" id="loading-demo">
+    <strong>loading 加载：</strong>
+    <label>宽度 <input id="loading-width" type="number" value="80"></label>
+    <label>高度 <input id="loading-height" type="number" value="80"></label>
+    <label>颜色 <input id="loading-color" value="#1976d2"></label>
+    <button onclick="runLoadingDemo()">运行示例</button>
+  </div>
+
+  <script src="/dist/popup.umd.min.js"></script>
+  <script>
+    const popup = new Popup();
+
+    function runAlertDemo() {
+      const title = document.getElementById('alert-title').value;
+      const content = document.getElementById('alert-content').value;
+      const btns = document.getElementById('alert-btns').value.split(',');
+      popup.alert({
+        title,
+        content,
+        btns,
+        callbacks: btns.map((b, i) => () => alert('点击了' + b))
+      });
+    }
+
+    function runTipsDemo() {
+      const title = document.getElementById('tips-title').value;
+      const content = document.getElementById('tips-content').value;
+      const color = document.getElementById('tips-color').value.split(',');
+      popup.tips({ title, content }, () => alert('点击了确定'), color);
+    }
+
+    function runMsgDemo() {
+      const content = document.getElementById('msg-content').value;
+      const time = parseInt(document.getElementById('msg-time').value, 10) || 1500;
+      popup.msg(content, { time });
+    }
+
+    function runConfirmDemo() {
+      const title = document.getElementById('confirm-title').value;
+      const content = document.getElementById('confirm-content').value;
+      const btns = document.getElementById('confirm-btns').value.split(',');
+      const color = document.getElementById('confirm-color').value.split(',');
+      popup.confirm(
+        { title, content },
+        { btn: btns, color },
+        () => alert('点击了' + btns[0]),
+        () => alert('点击了' + btns[1])
+      );
+    }
+
+    function runImageDemo() {
+      const imgUrl = document.getElementById('image-url').value;
+      popup.showImagePreview({
+        imgUrl,
+        onClose: () => alert('关闭图片预览')
+      });
+    }
+
+    function runBottomDemo() {
+      const title = document.getElementById('bottom-title').value;
+      const content = document.getElementById('bottom-content').value;
+      const btns = document.getElementById('bottom-btns').value.split(',');
+      popup.showBottomPopup({
+        title,
+        content,
+        btns,
+        callbacks: btns.map((b, i) => () => alert('点击了' + b)),
+        cancelCallbacks: () => alert('点击了关闭')
+      });
+    }
+
+    function runLoadingDemo() {
+      const width = parseInt(document.getElementById('loading-width').value, 10) || 80;
+      const height = parseInt(document.getElementById('loading-height').value, 10) || 80;
+      const color = document.getElementById('loading-color').value;
+      popup.load({ width, height, color });
+      setTimeout(() => popup.close(), 2000);
+    }
+  </script>
+</body>
+</html>

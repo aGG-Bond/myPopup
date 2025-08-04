@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Popup Component 移动端 Demo & API 文档</title>
+  <link rel="stylesheet" href="./normalize.css">
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background: #f7f7f7;
+    }
+
+    body {
+      font-family: "PingFang SC", Arial, sans-serif;
+      padding: 16px;
+    }
+
+    body>h1 {
+      font-size: 5vw;
+      margin-bottom: 2vw;
+    }
+
+    body>h2 {
+      font-size: 4vw;
+      margin-top: 6vw;
+    }
+
+    .demo-group {
+      margin-bottom: 6vw;
+      display: flex;
+      flex-direction: column;
+      gap: 2vw;
+    }
+
+    .demo-group>button,
+    .example>button {
+      padding: 2vw;
+      font-size: 4vw;
+      border-radius: 2vw;
+      border: none;
+      background: #2196f3;
+      color: #fff;
+    }
+
+    .demo-group>button:active {
+      background: #1976d2;
+    }
+
+    pre,
+    code {
+      background: #eee;
+      padding: 1vw 2vw;
+      border-radius: 2vw;
+      font-size: 3vw;
+      overflow-x: auto;
+    }
+
+    .api-table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 3vw;
+      margin-top: 2vw;
+    }
+
+    .api-table th,
+    .api-table td {
+      border: 1px solid #ccc;
+      padding: 2vw 1vw;
+      text-align: left;
+    }
+
+    .api-table th {
+      background: #e0e0e0;
+    }
+
+    .example {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 3vw;
+      margin-bottom: 4vw;
+      border-radius: 3vw;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Popup Component 移动端演示与 API 文档</h1>
+
+  <div class="demo-group">
+    <button onclick="showAlert()">alert 弹窗</button>
+    <button onclick="showTips()">tips 弹窗</button>
+    <button onclick="showMsg()">msg 消息</button>
+    <button onclick="showConfirm()">confirm 确认框</button>
+    <button onclick="showImagePreview()">图片预览</button>
+    <button onclick="showBottomPopup()">底部弹窗</button>
+    <button onclick="showLoading()">loading 加载</button>
+  </div>
+
+  <h2>API 一览</h2>
+  <table class="api-table">
+    <tr>
+      <th>方法</th>
+      <th>说明</th>
+      <th>主要参数</th>
+    </tr>
+    <tr>
+      <td><code>alert(options)</code></td>
+      <td>弹出带按钮的提示框</td>
+      <td>
+        <code>title</code>：标题<br>
+        <code>content</code>：内容<br>
+        <code>btns</code>：按钮数组<br>
+        <code>callbacks</code>：按钮回调数组
+      </td>
+    </tr>
+    <tr>
+      <td><code>tips(options, callback, color)</code></td>
+      <td>弹出带确认按钮的提示</td>
+      <td>
+        <code>title</code>、<code>content</code>、<code>callback</code>、<code>color</code>
+      </td>
+    </tr>
+    <tr>
+      <td><code>msg(content, options)</code></td>
+      <td>消息提示（自动消失）</td>
+      <td>
+        <code>content</code>：消息内容<br>
+        <code>time</code>：显示时长<br>
+        <code>icon</code>：图标类型
+      </td>
+    </tr>
+    <tr>
+      <td><code>confirm(info, obj, cb1, cb2)</code></td>
+      <td>确认框</td>
+      <td>
+        <code>info</code>：内容和标题<br>
+        <code>obj</code>：按钮和颜色配置<br>
+        <code>cb1</code>、<code>cb2</code>：回调
+      </td>
+    </tr>
+    <tr>
+      <td><code>showImagePreview(options)</code></td>
+      <td>图片预览弹窗</td>
+      <td>
+        <code>imgUrl</code>：图片地址<br>
+        <code>onClose</code>：关闭回调
+      </td>
+    </tr>
+    <tr>
+      <td><code>showBottomPopup(options)</code></td>
+      <td>底部弹窗</td>
+      <td>
+        <code>title</code>、<code>content</code>、<code>btns</code>、<code>callbacks</code>
+      </td>
+    </tr>
+    <tr>
+      <td><code>load(options)</code></td>
+      <td>加载动画弹窗</td>
+      <td>
+        <code>width</code>、<code>height</code>、<code>color</code>
+      </td>
+    </tr>
+    <tr>
+      <td><code>close()</code></td>
+      <td>关闭弹窗</td>
+      <td>无</td>
+    </tr>
+  </table>
+
+  <h2>使用示例</h2>
+
+  <div class="example">
+    <strong>alert 弹窗：</strong>
+    <pre><code>
+popup.alert({
+  title: '提示',
+  content: '这是一个 alert 弹窗',
+  btns: ['确定', '取消'],
+  callbacks: [
+    () => alert('点击了确定'),
+    () => alert('点击了取消')
+  ]
+});
+    </code></pre>
+    <button onclick="showAlert()">运行示例</button>
+  </div>
+
+  <div class="example">
+    <strong>tips 弹窗：</strong>
+    <pre><code>
+popup.tips({
+  title: '温馨提示',
+  content: '这是一个tips弹窗！'
+}, () => alert('点击了确定'), ['#4caf50']);
+    </code></pre>
+    <button onclick="showTips()">运行示例</button>
+  </div>
+
+  <div class="example">
+    <strong>msg 消息：</strong>
+    <pre><code>
+popup.msg('这是一个消息提示', { time: 1500 });
+    </code></pre>
+    <button onclick="showMsg()">运行示例</button>
+  </div>
+
+  <div class="example">
+    <strong>confirm 确认框：</strong>
+    <pre><code>
+popup.confirm(
+  { title: '确认操作', content: '你确定要继续吗？' },
+  { btn: ['确定', '取消'], color: ['#2196f3', '#21cbf3'] },
+  () => alert('点击了确定'),
+  () => alert('点击了取消')
+);
+    </code></pre>
+    <button onclick="showConfirm()">运行示例</button>
+  </div>
+
+  <div class="example">
+    <strong>图片预览：</strong>
+    <pre><code>
+popup.showImagePreview({
+  imgUrl: 'https://placekitten.com/300/200',
+  onClose: () => alert('关闭图片预览')
+});
+    </code></pre>
+    <button onclick="showImagePreview()">运行示例</button>
+  </div>
+
+  <div class="example">
+    <strong>底部弹窗：</strong>
+    <pre><code>
+popup.showBottomPopup({
+  title: '底部弹窗',
+  content: '这是底部弹窗内容',
+  btns: ['确定', '取消'],
+  callbacks: [
+    () => alert('点击了确定'),
+    () => alert('点击了取消')
+  ],
+  cancelCallbacks: () => alert('点击了关闭')
+});
+    </code></pre>
+    <button onclick="showBottomPopup()">运行示例</button>
+  </div>
+
+  <div class="example">
+    <strong>loading 加载：</strong>
+    <pre><code>
+popup.load({
+  width: 80,
+  height: 80,
+  color: '#1976d2'
+});
+setTimeout(() => popup.close(), 2000);
+    </code></pre>
+    <button onclick="showLoading()">运行示例</button>
+  </div>
+
+  <script src="/dist/popup.umd.min.js"></script>
+  <script>
+    const popup = new Popup();
+
+    function showAlert() {
+      popup.alert({
+        title: '提示',
+        content: '这是一个 alert 弹窗',
+        btns: ['确定', '取消'],
+        callbacks: [
+          () => alert('点击了确定'),
+          () => alert('点击了取消')
+        ]
+      });
+    }
+
+    function showTips() {
+      popup.tips({
+        title: '温馨提示',
+        content: '这是一个tips弹窗！'
+      }, () => alert('点击了确定'), ['#4caf50']);
+    }
+
+    function showMsg() {
+      popup.msg('这是一个消息提示', { time: 1500 });
+    }
+
+    function showConfirm() {
+      popup.confirm(
+        { title: '确认操作', content: '你确定要继续吗？' },
+        { btn: ['确定', '取消'], color: ['#2196f3', '#21cbf3'] },
+        () => alert('点击了确定'),
+        () => alert('点击了取消')
+      );
+    }
+
+    function showImagePreview() {
+      popup.showImagePreview({
+        imgUrl: 'https://placekitten.com/300/200',
+        onClose: () => alert('关闭图片预览')
+      });
+    }
+
+    function showBottomPopup() {
+      popup.showBottomPopup({
+        title: '底部弹窗',
+        content: '这是底部弹窗内容',
+        btns: ['确定', '取消'],
+        callbacks: [
+          () => alert('点击了确定'),
+          () => alert('点击了取消')
+        ],
+        cancelCallbacks: () => alert('点击了关闭')
+      });
+    }
+
+    function showLoading() {
+      popup.load({
+        width: 80,
+        height: 80,
+        color: '#1976d2'
+      });
+      setTimeout(() => popup.close(), 2000);
+    }
+  </script>
+</body>
+
+</html>
