@@ -61,9 +61,19 @@ popup.tips({
 
 - `popup.alert(options)`：弹出带按钮的提示框
 - `popup.tips(options, callback, color)`：弹出带确认按钮的提示
+- `popup.msg(content, options)`：消息提示（自动消失）
+- `popup.confirm(info, obj, cb1, cb2)`：确认框
 - `popup.showImagePreview({ imgUrl, ... })`：图片预览弹窗
+- `popup.showBottomPopup(options)`：底部弹窗
+- `popup.load(options)`：加载动画弹窗
+- `popup.close()`：关闭弹窗
 
 参数详见源码注释或后续文档补充。
+
+## 移动端 Demo
+
+建议参考 `demo/index.html`，支持参数可视化编辑和所有功能演示。
+
 
 ## 贡献与持续优化
 
