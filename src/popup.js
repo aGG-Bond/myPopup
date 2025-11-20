@@ -219,7 +219,7 @@ class Popup {
 	}
 	// 底部弹窗
 	showBottomPopup(paramObj) {
-		const { title, content, cancelCallbacks=()=>{}, contentBoxStyle = {}, contentStyle = {}, titleStyle = {}, closeBtnStyle = {}, svgStyle = {}, btns = [], btnStyle = [], addEventListener = () => { }, callbacks = [() => { }] } = paramObj;
+		const { title, content, cancelCallbacks=()=>{}, contentBoxStyle = {}, contentStyle = {}, titleStyle = {}, closeBtnStyle = {}, svgStyle = {}, btnBoxStyle='',btns = [], btnStyle = [], addEventListener = () => { }, callbacks = [() => { }] } = paramObj;
 
 		const defaultContentBoxStyle = {
 			position: 'absolute',
@@ -265,7 +265,12 @@ class Popup {
 			closePreview();
 			this.close();
 		});
-
+		const defaultBtnBoxStyle = { 
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+			width: '100%'
+		};
 		const defaultBtnStyle = {
 			width: '100%',
 			height: '40px',
@@ -279,9 +284,11 @@ class Popup {
 			borderRadius: '0 0 10px 10px'
 		}
 		if (btns.length > 0) {
+			const btnBox = this.createStyledElement('div', btnBoxStyle || defaultBtnBoxStyle);
+			this.contentBox.appendChild(btnBox);
 			btns.map((item, index) => {
 				const btnItem = this.createButton(item, btnStyle?.[index] || defaultBtnStyle);
-				this.contentBox.appendChild(btnItem);
+				btnBox.appendChild(btnItem);
 				this.addClickListeners([btnItem], () => {
 					const callback = callbacks?.[index];
 					if (callback) {
