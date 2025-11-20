@@ -8,11 +8,13 @@ const packageJson = JSON.parse(
   fs.readFileSync(path.resolve("./package.json"), "utf-8")
 );
 const { version, license } = packageJson;
+
+const currentYear = new Date().getFullYear();
 const banner = `/*!
  * myPopup Component v${version}
- * Author: aGG-Bond
  * GitHub: https://github.com/aGG-Bond/myPopup
- * License: ${license}
+ * (c) ${currentYear} aGG-Bond
+ * @license ${license}
  */`;
 // 创建最新版本快捷方式的插件
 const createLatestSymlink = () => ({

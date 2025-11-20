@@ -1,8 +1,8 @@
 /*!
  * myPopup Component v1.0.1
- * Author: aGG-Bond
  * GitHub: https://github.com/aGG-Bond/myPopup
- * License: MIT
+ * (c) 2025 aGG-Bond
+ * @license MIT
  */
 class Popup {
 	baseMaskStyle = {

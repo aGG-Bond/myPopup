@@ -1,8 +1,8 @@
 /*!
  * myPopup Component v1.0.1
- * Author: aGG-Bond
  * GitHub: https://github.com/aGG-Bond/myPopup
- * License: MIT
+ * (c) 2025 aGG-Bond
+ * @license MIT
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
