@@ -1,6 +1,10 @@
 {
-  "name": "popup-component",
+  "name": "@aggbond/my-popup",
   "version": "1.0.1",
+  "publishConfig": {
+    "provenance": false,
+    "access": "public"
+  },
   "main": "dist/popup.umd.js",
   "module": "dist/popup.esm.js",
   "unpkg": "dist/popup.umd.min.js",
@@ -19,7 +23,9 @@
   "license": "MIT",
   "files": [
     "dist",
-    "src"
+    "src",
+    "README.md",
+    "LICENSE"
   ],
   "description": "",
   "devDependencies": {
