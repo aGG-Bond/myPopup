@@ -32,6 +32,7 @@ jobs:
       - name: Publish to npm using Trusted Publishing
         run: npm publish --access public
         # 但需要在 npmjs.com 上配置 Trusted Publishers
+        
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         env:
