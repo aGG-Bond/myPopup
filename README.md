@@ -2,29 +2,54 @@
 
 一个简单易用、可扩展的弹窗组件，支持多种弹窗样式，适合前端项目集成和二次开发。
 
-## 安装依赖
+## 安装
 
 ```bash
-npm install
+npm install @aggbond/my-popup
 ```
 
 ## 构建与压缩
 
-- 构建（打包源码到 dist）：  
+- 构建（打包源码到 dist）：
   ```bash
   npm run build
   ```
-- 开发模式（监听源码变化自动打包）：  
+- 开发模式（监听源码变化自动打包）：
   ```bash
   npm run dev
-  ```
-- 压缩 dist 目录下的 JS 文件（如有 compress.js 脚本）：  
-  ```bash
-  node scripts/compress.js
   ```
 
 ## 使用说明
 
+### 通过 npm 包引入
+
+#### ES Module 方式（推荐）
+
+```js
+import Popup from "@aggbond/my-popup";
+
+const popup = new Popup();
+popup.alert({
+  title: "提示",
+  content: "Hello World!",
+  btns: ["确定"],
+  callbacks: [
+    function () {
+      alert("点击了确定");
+    },
+  ],
+});
+```
+#### CommonJS 方式
+```js
+const Popup = require('@aggbond/my-popup');
+
+const popup = new Popup();
+popup.tips({
+  title: '温馨提示',
+  content: '操作成功！'
+});
+```
 ### 浏览器直接引入
 
 将 `dist/popup.umd.min.js` 用 `<script>` 标签引入页面：
@@ -35,25 +60,34 @@ npm install
   // Popup 会挂载到全局
   const popup = new Popup();
   popup.alert({
-    title: '提示',
-    content: 'Hello World!',
-    btns: ['确定'],
-    callbacks: [function() { alert('点击了确定'); }]
+    title: "提示",
+    content: "Hello World!",
+    btns: ["确定"],
+    callbacks: [
+      function () {
+        alert("点击了确定");
+      },
+    ],
   });
 </script>
 ```
-
+### 在HTML 页面通过CDN引入
+```html
+<script src="https://cdn.jsdelivr.net/npm/@aggbond/my-popup@1.0.2/dist/popup.umd.min.js"></script>
+<script>
+  const popup = new Popup();
+  // 使用 popup 实例
+</script>
+```
 ### ES Module 引入
 
-适用于现代前端工程化项目：
-
 ```js
-import Popup from './dist/popup.esm.js';
+import Popup from "./dist/popup.esm.js";
 
 const popup = new Popup();
 popup.tips({
-  title: '温馨提示',
-  content: '操作成功！'
+  title: "温馨提示",
+  content: "操作成功！",
 });
 ```
 
@@ -73,7 +107,6 @@ popup.tips({
 ## 移动端 Demo
 
 建议参考 `demo/index.html`，支持参数可视化编辑和所有功能演示。
-
 
 ## 贡献与持续优化
 
