@@ -21,6 +21,14 @@
   ],
   "author": "GG_Bond",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aGG-Bond/myPopup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aGG-Bond/myPopup/issues"
+  },
+  "homepage": "https://github.com/aGG-Bond/myPopup#readme",
   "files": [
     "dist",
     "src",
