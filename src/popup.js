@@ -42,7 +42,6 @@ class Popup {
 	}
 	// 中间有弹框的 
 	middleBox(param) {
-		// 清空所有样式
 		this.contentBox.style.cssText = '';
 		// 应用基础样式
 		this.setStyle(this.contentBox, this.baseContentBoxStyle);
@@ -635,10 +634,6 @@ class Popup {
 		return btn;
 	}
 
-
-	// addClickListeners(elements, callback) {
-	// 	elements.forEach(element => element.addEventListener('click', callback));
-	// }
 	addClickListeners(elements, callback) {
 		elements.forEach(element => {
 			const listener = element.addEventListener('click', callback);
