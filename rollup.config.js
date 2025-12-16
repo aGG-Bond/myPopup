@@ -1,6 +1,7 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import terser from "@rollup/plugin-terser";
+import typescript from "@rollup/plugin-typescript";
 import fs from "fs";
 import path from "path";
 // 动态读取 package.json 获取版本号
@@ -20,7 +21,7 @@ const banner = `/*!
 export default [
   // 非压缩版本
   {
-    input: "src/popup.js",
+    input: "src/popup.ts",
     output: [
       {
         file: `dist/popup.esm.js`,
@@ -34,11 +35,11 @@ export default [
         banner,
       },
     ],
-    plugins: [nodeResolve(), commonjs()],
+    plugins: [typescript(), nodeResolve(), commonjs()],
   },
   // 压缩版本
   {
-    input: "src/popup.js",
+    input: "src/popup.ts",
     output: [
       {
         file: `dist/popup.esm.min.js`,
@@ -51,6 +52,7 @@ export default [
       },
     ],
     plugins: [
+      typescript(),
       nodeResolve(),
       commonjs(),
       terser({

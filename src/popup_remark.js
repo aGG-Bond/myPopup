@@ -1,4 +1,79 @@
+/**
+ * Popup 类型定义
+ */
+/**
+ * 基础样式对象
+ * @typedef {Object<string, string>} BaseStyle
+ */
+
+/**
+ * 弹窗参数接口
+ * @typedef {Object} PopupParam
+ * @property {string} [title='默认标题内容'] - 标题
+ * @property {string} [content='弹窗的默认提示信息！'] - 内容
+ * @property {boolean} [isTitleBox=true] - 是否显示标题按钮
+ * @property {boolean} [isCloseSvg=true] - 是否显示关闭按钮
+ * @property {BaseStyle} [closeBtnStyle={}] - 关闭按钮样式
+ * @property {BaseStyle} [btnStyle={}] - 按钮样式
+ * @property {BaseStyle} [contentStyle={}] - 内容样式
+ * @property {BaseStyle} [titleStyle={}] - 标题样式
+ * @property {Function} [closePreview=()=>{}] - 关闭预览回调
+ */
+
+/**
+ * Alert参数接口
+ * @typedef {PopupParam & { btnStyle?: BaseStyle[], btns: string[], callbacks?: Function[] }} AlertParam
+ */
+
+/**
+ * Confirm参数接口
+ * @typedef {Object} ConfirmInfo
+ * @property {string} [title] - 标题
+ * @property {string} [content] - 内容
+ * @property {boolean} [isTitleBox] - 是否显示标题按钮
+ */
+
+/**
+ * Confirm选项接口
+ * @typedef {Object} ConfirmOptions
+ * @property {string[]} [btn] - 按钮文字数组
+ * @property {string[]} [color] - 颜色数组
+ */
+
+/**
+ * Load参数接口
+ * @typedef {Object} LoadParam
+ * @property {number} [width=100] - 宽度
+ * @property {number} [height=100] - 高度
+ * @property {string} [color='#201c1d'] - 颜色
+ */
+
+/**
+ * Msg参数接口
+ * @typedef {Object} MsgParam
+ * @property {number} [time=1000] - 显示时间
+ * @property {number} [icon] - 图标类型 (0或1)
+ */
+
+/**
+ * BottomPopup参数接口
+ * @typedef {PopupParam & {
+ *   cancelCallbacks?: Function,
+ *   contentBoxStyle?: BaseStyle,
+ *   contentStyle?: BaseStyle,
+ *   titleStyle?: BaseStyle,
+ *   closeBtnStyle?: BaseStyle,
+ *   svgStyle?: BaseStyle,
+ *   btnBoxStyle?: BaseStyle|string,
+ *   btns?: string[],
+ *   btnStyle?: BaseStyle[],
+ *   addEventListener?: Function,
+ *   callbacks?: Function[]
+ * }} BottomPopupParam
+ */
+
 class Popup {
+  /** @type {BaseStyle} */
   baseMaskStyle = {
     width: "100%",
     height: "100%",
@@ -8,6 +83,8 @@ class Popup {
     top: 0,
     zIndex: "9999",
   };
+
+  /** @type {BaseStyle} */
   baseContentBoxStyle = {
     minWidth: "300px",
     backgroundColor: "#fff",
@@ -18,6 +95,34 @@ class Popup {
     transform: "translate(-50%,-50%)",
     borderRadius: "10px",
   };
+
+  /** @type {HTMLElement} */
+  mask;
+
+  /** @type {HTMLElement} */
+  contentBox;
+
+  /** @type {HTMLElement} */
+  titleDiv;
+
+  /** @type {HTMLElement} */
+  closeBtn;
+
+  /** @type {HTMLElement} */
+  content;
+
+  /** @type {Function[]} */
+  queue;
+
+  /** @type {boolean} */
+  isShowing;
+
+  /** @type {{element: HTMLElement, callback: Function}[]} */
+  eventListeners;
+
+  /** @type {number} */
+  timer;
+
   // 构造函数中定义公共要使用的div
   constructor() {
     this.eventListeners = [];
@@ -31,6 +136,9 @@ class Popup {
     this.queue = []; // 弹窗队列
     this.isShowing = false; // 当前是否正在显示弹窗
   }
+  /**
+   * 显示下一个弹窗
+   */
   showNext() {
     console.log("queue-showNext", this.queue);
 
@@ -40,7 +148,11 @@ class Popup {
       nextPopup();
     }
   }
-  // 中间有弹框的
+
+  /**
+   * 创建中间弹窗
+   * @param {PopupParam} param - 弹窗参数
+   */
   middleBox(param) {
     this.contentBox.style.cssText = "";
     // 应用基础样式
@@ -121,7 +233,10 @@ class Popup {
     this.contentBox.appendChild(this.content);
   }
 
-  // 弹出提示框
+  /**
+   * 弹出提示框
+   * @param {AlertParam} param - alert参数
+   */
   alert(param) {
     const { btnStyle, btns, callbacks = [] } = param;
     const defaultBtnStyle = {
@@ -153,7 +268,12 @@ class Popup {
     }
   }
 
-  // 弹出提示框
+  /**
+   * 提示框
+   * @param {PopupParam} param - 参数
+   * @param {Function} cb - 回调函数
+   * @param {string[]} color - 颜色数组
+   */
   tips(param, cb, color = []) {
     const affirm = cb && typeof cb === "function" ? cb : () => {};
     this.middleBox(param);
@@ -194,7 +314,14 @@ class Popup {
     });
   }
 
-  // 预览图片框
+  /**
+   * 预览图片框
+   * @param {Object} options - 选项
+   * @param {string} options.imgUrl - 图片URL
+   * @param {string[]} options.color - 颜色数组
+   * @param {Function} options.onClose - 关闭回调
+   * @param {string} options.svgIcon - SVG图标
+   */
   showImagePreview({ imgUrl, color, onClose, svgIcon }) {
     const closePreview = onClose || (() => {});
     this.middleBox({ content: "", isTitleBox: false });
@@ -239,7 +366,11 @@ class Popup {
       this.close();
     });
   }
-  // 底部弹窗
+
+  /**
+   * 底部弹窗
+   * @param {BottomPopupParam} paramObj - 底部弹窗参数
+   */
   showBottomPopup(paramObj) {
     const {
       title,
@@ -345,12 +476,25 @@ class Popup {
     }
     addEventListener();
   }
+
+  /**
+   * 改变颜色
+   * @param {string[]} colorArr - 颜色数组
+   * @returns {string} 处理后的颜色值
+   */
   changeColor(colorArr) {
     if (!Array.isArray(colorArr) || colorArr.length === 0) return "#fff";
     if (colorArr.length === 1) return colorArr[0];
     return `linear-gradient(${colorArr[0]} 0%, ${colorArr[1]} 100%), ${colorArr[1]}`;
   }
 
+  /**
+   * 确认框
+   * @param {ConfirmInfo} info - 信息
+   * @param {ConfirmOptions} obj - 选项
+   * @param {Function} cb1 - 确认回调
+   * @param {Function} cb2 - 取消回调
+   */
   confirm(info, obj, cb1, cb2) {
     // 调用创建中间小div的函数
     this.middleBox(info);
@@ -400,6 +544,11 @@ class Popup {
     });
   }
 
+  /**
+   * 消息提示
+   * @param {string} str - 消息内容
+   * @param {MsgParam} param - 参数
+   */
   msg(str, param) {
     console.log("queue-msg", this.queue);
     this.queue.push(() => {
@@ -505,9 +654,8 @@ class Popup {
       this.showNext();
     }
   }
-
-  load = (paramObj = {}) => {
-    /**
+  /**
+   * 加载动画
      *  @param {Object} paramObj load 参数;
      *  @param {width} paramObj.width loading SVG 宽度;
      *  @param {height} paramObj.height loading SVG 高度;
@@ -515,6 +663,7 @@ class Popup {
      *  @param {size} width,height 尺寸大小取最大值;
      *
      */
+  load = (paramObj = {}) => {
     console.log("queue-load", this.queue);
 
     this.queue.push(() => {
@@ -618,6 +767,10 @@ class Popup {
     }
   };
 
+  /**
+   * 关闭弹窗
+   * @param {string|number} form - 来源标识
+   */
   close(form = "") {
     console.log("close", form);
     if (this.mask.parentElement) {
@@ -631,6 +784,13 @@ class Popup {
     this.removeEventListeners();
   }
 
+  /**
+   * 防抖函数
+   * @param {Function} func - 要防抖的函数
+   * @param {number} delay - 延迟时间(ms)
+   * @param {boolean} immediate - 是否立即执行
+   * @returns {Function} 防抖后的函数
+   */
   debounce(func, delay, immediate) {
     let timeoutId;
     return function (...args) {
@@ -650,17 +810,33 @@ class Popup {
     };
   }
 
-  // 设置样式的函数
+  /**
+   * 设置元素样式
+   * @param {HTMLElement} ele - 元素
+   * @param {BaseStyle} styleObj - 样式对象
+   */
   setStyle(ele, styleObj) {
     Object.assign(ele.style, styleObj);
   }
 
+  /**
+   * 创建带样式的元素
+   * @param {string} tag - 标签名
+   * @param {BaseStyle} styleObj - 样式对象
+   * @returns {HTMLElement} 创建的元素
+   */
   createStyledElement(tag, styleObj) {
     const ele = document.createElement(tag);
     this.setStyle(ele, styleObj);
     return ele;
   }
 
+  /**
+   * 创建按钮
+   * @param {string} text - 按钮文本
+   * @param {BaseStyle} additionalStyles - 额外样式
+   * @returns {HTMLButtonElement} 创建的按钮
+   */
   createButton(text, additionalStyles = {}) {
     const btn = this.createStyledElement("button", {
       backgroundColor: "#fff",
@@ -678,6 +854,11 @@ class Popup {
     return btn;
   }
 
+  /**
+   * 添加点击监听器
+   * @param {HTMLElement[]} elements - 元素数组
+   * @param {Function} callback - 回调函数
+   */
   addClickListeners(elements, callback) {
     elements.forEach((element) => {
       const listener = element.addEventListener("click", callback);
@@ -685,6 +866,9 @@ class Popup {
     });
   }
 
+  /**
+   * 移除所有事件监听器
+   */
   removeEventListeners() {
     this.eventListeners.forEach(({ element, callback }) => {
       element.removeEventListener("click", callback);
