@@ -17,7 +17,7 @@ interface MiddleBoxParams {
 interface AlertParams extends MiddleBoxParams {
   btnStyles?: BaseStyle[];
   btns?: string[];
-  callbacks?: Array<() => void>;
+  callbacks?: Array<() => Boolean | void>;
 }
 
 interface TipsParams extends MiddleBoxParams {
@@ -44,7 +44,7 @@ interface ShowBottomPopupParams {
   btns?: string[];
   btnStyle?: BaseStyle[];
   addEventListener?: () => void;
-  callbacks?: Array<() => void>;
+  callbacks?: Array<() => Boolean | void>;
 }
 
 interface ConfirmParams extends MiddleBoxParams {
@@ -224,8 +224,12 @@ class Popup {
         this.contentBox.appendChild(btnItem);
         this.addClickListeners([btnItem], () => {
           const callback = callbacks?.[index];
-          if (callback) callback();
-          this.close();
+          if (callback) {
+            const result = callback();
+            if (result !== false) this.close();
+          } else {
+            this.close();
+          }
         });
       });
     }
@@ -421,9 +425,11 @@ class Popup {
         this.addClickListeners([btnItem], () => {
           const callback = callbacks?.[index];
           if (callback) {
-            callback();
+            const result = callback();
+            if (result !== false) this.close();
+          } else {
+            this.close();
           }
-          this.close();
         });
       });
     }

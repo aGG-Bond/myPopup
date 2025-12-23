@@ -178,13 +178,25 @@
   <div class="example">
     <strong>alert 弹窗：</strong>
     <pre><code>
+const popup = new Popup();
+const popup2 = new Popup();
+// 返回 false 保持弹窗打开
 popup.alert({
-  title: '提示',
-  content: '这是一个 alert 弹窗',
-  btns: ['确定', '取消'],
+  title: '验证示例',
+  content: '点击确定按钮验证输入',
+  btns: ['验证', '关闭'],
   callbacks: [
-    () => alert('点击了确定'),
-    () => alert('点击了取消')
+    () => {
+      // 模拟验证失败，返回 false 保持弹窗打开
+      if (Math.random() < 0.5) {
+        popup.msg('验证失败，请重试', { time: 1500 });
+        return false; // 保持弹窗打开
+      } else {
+        popup.msg('验证成功', { time: 1500 });
+        // 不返回 false，弹窗将自动关闭
+      }
+    },
+    () => console.log('关闭按钮被点击')
   ]
 });
     </code></pre>
@@ -194,10 +206,11 @@ popup.alert({
   <div class="example">
     <strong>tips 弹窗：</strong>
     <pre><code>
+const popup2 = new Popup();
 popup.tips({
   title: '温馨提示',
   content: '这是一个tips弹窗！'
-}, () => alert('点击了确定'), ['#4caf50']);
+}, () => popup2.msg('点击了确定'), ['#4caf50']);
     </code></pre>
     <button onclick="showTips()">运行示例</button>
   </div>
@@ -216,8 +229,8 @@ popup.msg('这是一个消息提示', { time: 1500 });
 popup.confirm(
   { title: '确认操作', content: '你确定要继续吗？' },
   { btn: ['确定', '取消'], color: ['#2196f3', '#21cbf3'] },
-  () => alert('点击了确定'),
-  () => alert('点击了取消')
+  () => popup2.msg('点击了确定'),
+  () => popup2.msg('点击了取消')
 );
     </code></pre>
     <button onclick="showConfirm()">运行示例</button>
@@ -228,7 +241,7 @@ popup.confirm(
     <pre><code>
 popup.showImagePreview({
   imgUrl: 'https://placekitten.com/300/200',
-  onClose: () => alert('关闭图片预览')
+  onClose: () => popup2.msg('关闭图片预览')
 });
     </code></pre>
     <button onclick="showImagePreview()">运行示例</button>
@@ -237,13 +250,24 @@ popup.showImagePreview({
   <div class="example">
     <strong>底部弹窗：</strong>
     <pre><code>
+const popup = new Popup();
+const popup2 = new Popup();
 popup.showBottomPopup({
   title: '底部弹窗',
   content: '这是底部弹窗内容',
-  btns: ['确定', '取消'],
+  btns: ['验证', '取消'],
   callbacks: [
-    () => alert('点击了确定'),
-    () => alert('点击了取消')
+    () => {
+        // 模拟验证失败，返回 false 保持弹窗打开
+        if (Math.random() < 0.5) {
+          popup2.msg('验证失败，请重试', { time: 1500 });
+          return false; // 保持弹窗打开
+        } else {
+          popup2.msg('验证成功', { time: 1500 });
+          // 不返回 false，弹窗将自动关闭
+        }
+      },
+    () => popup2.msg('点击了取消')
   ],
   cancelCallbacks: () => alert('点击了关闭')
 });
@@ -267,15 +291,24 @@ setTimeout(() => popup.close(), 2000);
   <script src="/dist/popup.umd.min.js"></script>
   <script>
     const popup = new Popup();
-
+    const popup2 = new Popup();
     function showAlert() {
       popup.alert({
-        title: '提示',
-        content: '这是一个 alert 弹窗',
-        btns: ['确定', '取消'],
+        title: '验证示例',
+        content: '点击验证按钮进行随机验证',
+        btns: ['验证', '关闭'],
         callbacks: [
-          () => alert('点击了确定'),
-          () => alert('点击了取消')
+          () => {
+            // 模拟验证失败，返回 false 保持弹窗打开
+            if (Math.random() < 0.5) {
+              popup2.msg('验证失败，请重试', { time: 1500 });
+              return false; // 保持弹窗打开
+            } else {
+              popup2.msg('验证成功', { time: 1500 });
+              // 不返回 false，弹窗将自动关闭
+            }
+          },
+          () => popup2.msg('关闭按钮被点击')
         ]
       });
     }
@@ -284,7 +317,7 @@ setTimeout(() => popup.close(), 2000);
       popup.tips({
         title: '温馨提示',
         content: '这是一个tips弹窗！'
-      }, () => alert('点击了确定'), ['#4caf50']);
+      }, () => popup2.msg('点击了确定'), ['#4caf50']);
     }
 
     function showMsg() {
@@ -295,15 +328,15 @@ setTimeout(() => popup.close(), 2000);
       popup.confirm(
         { title: '确认操作', content: '你确定要继续吗？' },
         { btn: ['确定', '取消'], color: ['#2196f3', '#21cbf3'] },
-        () => alert('点击了确定'),
-        () => alert('点击了取消')
+        () => popup2.msg('点击了确定'),
+        () => popup2.msg('点击了取消')
       );
     }
 
     function showImagePreview() {
       popup.showImagePreview({
         imgUrl: 'https://placekitten.com/300/200',
-        onClose: () => alert('关闭图片预览')
+        onClose: () => popup2.msg('关闭图片预览')
       });
     }
 
@@ -311,12 +344,21 @@ setTimeout(() => popup.close(), 2000);
       popup.showBottomPopup({
         title: '底部弹窗',
         content: '这是底部弹窗内容',
-        btns: ['确定', '取消'],
+        btns: ['验证', '取消'],
         callbacks: [
-          () => alert('点击了确定'),
-          () => alert('点击了取消')
+          () => {
+            // 模拟验证失败，返回 false 保持弹窗打开
+            if (Math.random() < 0.5) {
+              popup2.msg('验证失败，请重试', { time: 1500 });
+              return false; // 保持弹窗打开
+            } else {
+              popup2.msg('验证成功', { time: 1500 });
+              // 不返回 false，弹窗将自动关闭
+            }
+          },
+          () => popup2.msg('点击了取消')
         ],
-        cancelCallbacks: () => alert('点击了关闭')
+        cancelCallbacks: () => popup2.msg('点击了关闭')
       });
     }
 

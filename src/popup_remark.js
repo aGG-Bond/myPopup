@@ -261,8 +261,12 @@ class Popup {
         this.contentBox.appendChild(btnItem);
         this.addClickListeners([btnItem], () => {
           const callback = callbacks?.[index];
-          callback && callback();
-          this.close();
+          if (callback) {
+            const result = callback();
+            if (result !== false) this.close();
+          } else {
+            this.close();
+          }
         });
       });
     }
@@ -468,9 +472,11 @@ class Popup {
         this.addClickListeners([btnItem], () => {
           const callback = callbacks?.[index];
           if (callback) {
-            callback();
+            const result = callback();
+            if (result !== false) this.close();
+          } else {
+            this.close();
           }
-          this.close.bind(this);
         });
       });
     }
