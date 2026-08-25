@@ -1,5 +1,25 @@
 # 更新日志 (Changelog)
 
+## [1.0.8] - 2026-08-25
+
+### 新增与改进
+- 为弹窗元素增加稳定的 CSS 类名，方便通过外部样式表统一定制外观。
+- 使用 `aggb-popup-*` 命名空间降低与宿主项目样式冲突的风险。
+- 导出 `PopupStyle` 类型，方便 TypeScript 项目复用样式类型。
+- 将 TypeScript 的模块解析方式从已弃用的 `node10` 迁移为 `bundler`。
+
+### CSS 类名
+- 遮罩：`.aggb-popup-mask`
+- 内容框：`.aggb-popup-content-box`
+- 标题：`.aggb-popup-title`
+- 内容：`.aggb-popup-content`
+- 关闭按钮：`.aggb-popup-close-button`
+- 按钮容器：`.aggb-popup-button-box`
+- 按钮：`.aggb-popup-button`
+- 图片：`.aggb-popup-image`
+- 消息：`.aggb-popup-message`
+- 加载图标：`.aggb-popup-loading`
+
 ## [1.0.7] - 2025-12-23
 
 ### 新增功能

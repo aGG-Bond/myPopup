@@ -1,4 +1,4 @@
-interface BaseStyle {
+export interface PopupStyle {
   [key: string]: string | number;
 }
 
@@ -7,15 +7,15 @@ interface MiddleBoxParams {
   content?: string;
   isTitleBox?: boolean;
   isCloseSvg?: boolean;
-  closeBtnStyle?: BaseStyle;
-  btnStyle?: BaseStyle;
-  contentStyle?: BaseStyle;
-  titleStyle?: BaseStyle;
+  closeBtnStyle?: PopupStyle;
+  btnStyle?: PopupStyle;
+  contentStyle?: PopupStyle;
+  titleStyle?: PopupStyle;
   closePreview?: () => void;
 }
 
 interface AlertParams extends MiddleBoxParams {
-  btnStyles?: BaseStyle[];
+  btnStyles?: PopupStyle[];
   btns?: string[];
   callbacks?: Array<() => Boolean | void>;
 }
@@ -35,14 +35,14 @@ interface ShowBottomPopupParams {
   title?: string;
   content?: string;
   cancelCallbacks?: () => void;
-  contentBoxStyle?: BaseStyle;
-  contentStyle?: BaseStyle;
-  titleStyle?: BaseStyle;
-  closeBtnStyle?: BaseStyle;
-  svgStyle?: BaseStyle;
-  btnBoxStyle?: BaseStyle;
+  contentBoxStyle?: PopupStyle;
+  contentStyle?: PopupStyle;
+  titleStyle?: PopupStyle;
+  closeBtnStyle?: PopupStyle;
+  svgStyle?: PopupStyle;
+  btnBoxStyle?: PopupStyle;
   btns?: string[];
-  btnStyle?: BaseStyle[];
+  btnStyle?: PopupStyle[];
   addEventListener?: () => void;
   callbacks?: Array<() => Boolean | void>;
 }
@@ -63,7 +63,20 @@ interface LoadParams {
 }
 
 class Popup {
-  baseMaskStyle: BaseStyle = {
+  static readonly classNames = {
+    mask: 'aggb-popup-mask',
+    contentBox: 'aggb-popup-content-box',
+    title: 'aggb-popup-title',
+    closeButton: 'aggb-popup-close-button',
+    content: 'aggb-popup-content',
+    buttonBox: 'aggb-popup-button-box',
+    button: 'aggb-popup-button',
+    image: 'aggb-popup-image',
+    message: 'aggb-popup-message',
+    loading: 'aggb-popup-loading'
+  } as const;
+
+  baseMaskStyle: PopupStyle = {
     width: '100%',
     height: '100%',
     backgroundColor: 'rgba(0, 0, 0, .2)',
@@ -73,7 +86,7 @@ class Popup {
     zIndex: '9999'
   };
 
-  baseContentBoxStyle: BaseStyle = {
+  baseContentBoxStyle: PopupStyle = {
     minWidth: '300px',
     backgroundColor: '#fff',
     boxShadow: '0 0 2px #999',
@@ -97,9 +110,11 @@ class Popup {
   // 构造函数中定义公共要使用的div
   constructor() {
     this.mask = document.createElement('div');
+    this.mask.className = Popup.classNames.mask;
     this.setStyle(this.mask, this.baseMaskStyle);
 
     this.contentBox = document.createElement('div');
+    this.contentBox.className = Popup.classNames.contentBox;
     this.setStyle(this.contentBox, this.baseContentBoxStyle);
 
     this.mask.appendChild(this.contentBox);
@@ -145,12 +160,12 @@ class Popup {
           height: '50px',
           // borderBottom: '1px solid #ccc',
           lineHeight: '50px',
-          paddingLeft: '20px',
+          // paddingLeft: '20px',
           boxSizing: 'border-box',
           color: '#666',
           textAlign: 'center'
         }, ...titleStyle
-      });
+      }, Popup.classNames.title);
 
       if (this.titleDiv) {
         this.titleDiv.innerText = title;
@@ -162,6 +177,7 @@ class Popup {
   </svg>`;
       const parser = new DOMParser();
       this.closeBtn = parser.parseFromString(svgString, 'image/svg+xml').documentElement;
+      this.closeBtn.classList.add(Popup.classNames.closeButton);
       // this.contentBox.appendChild(svgElement);
 
       this.setStyle(this.closeBtn, {
@@ -192,7 +208,7 @@ class Popup {
         padding: '0 20px 20px',
         // lineHeight: '50px'
       }, ...contentStyle
-    });
+    }, Popup.classNames.content);
 
     if (this.content) {
       this.content.innerHTML = content || '';
@@ -203,7 +219,7 @@ class Popup {
   // 弹出提示框
   alert(param: AlertParams): void {
     const { btnStyles, btns = [], callbacks = [] } = param;
-    const defaultBtnStyle: BaseStyle = {
+    const defaultBtnStyle: PopupStyle = {
       width: '100%',
       height: '10.677vw',
       lineHeight: '10.677vw',
@@ -285,7 +301,7 @@ class Popup {
     const image = this.createStyledElement('img', {
       maxWidth: '100%',
       maxHeight: '70vh'
-    });
+    }, Popup.classNames.image);
     image.src = imgUrl;
     this.contentBox.appendChild(image);
 
@@ -299,7 +315,7 @@ class Popup {
     this.setStyle(svgElement, {
       // position: 'absolute',
       right: '0',
-      padding: '3vw',
+      margin: '3vw',
       width: '24px',
       // background: this.changeColor(color) || '#000'
     });
@@ -337,7 +353,7 @@ class Popup {
       callbacks = [() => { }]
     } = paramObj;
 
-    const defaultContentBoxStyle: BaseStyle = {
+    const defaultContentBoxStyle: PopupStyle = {
       position: 'absolute',
       bottom: 0,
       top: 'auto',
@@ -352,7 +368,7 @@ class Popup {
       flexDirection: 'column',
     };
 
-    const defaultContentStyle: BaseStyle = {
+    const defaultContentStyle: PopupStyle = {
       boxSizing: 'border-box',
       overflowY: 'auto',
       overflowX: 'hidden',
@@ -365,11 +381,11 @@ class Popup {
       fontSize: '4vw'
     };
 
-    const defaultTitleStyle: BaseStyle = {
+    const defaultTitleStyle: PopupStyle = {
       fontSize: '5vw'
     };
 
-    const defaultCloseBtnStyle: BaseStyle = {
+    const defaultCloseBtnStyle: PopupStyle = {
       color: '#000'
     };
 
@@ -396,14 +412,14 @@ class Popup {
       });
     }
 
-    const defaultBtnBoxStyle: BaseStyle = {
+    const defaultBtnBoxStyle: PopupStyle = {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       width: '100%'
     };
 
-    const defaultBtnStyle: BaseStyle = {
+    const defaultBtnStyle: PopupStyle = {
       width: '100%',
       height: '40px',
       lineHeight: '40px',
@@ -417,7 +433,7 @@ class Popup {
     };
 
     if (btns.length > 0) {
-      const btnBox = this.createStyledElement('div', (typeof btnBoxStyle === 'string') ? defaultBtnBoxStyle : btnBoxStyle);
+      const btnBox = this.createStyledElement('div', (typeof btnBoxStyle === 'string') ? defaultBtnBoxStyle : btnBoxStyle, Popup.classNames.buttonBox);
       this.contentBox.appendChild(btnBox);
       btns.map((item, index) => {
         const btnItem = this.createButton(item, btnStyle?.[index] || defaultBtnStyle);
@@ -468,7 +484,7 @@ class Popup {
       padding: '20px',
       display: 'flex',
       justifyContent: 'flex-end'
-    });
+    }, Popup.classNames.buttonBox);
     this.contentBox.appendChild(btnBox);
 
     const confirmBtn = this.createButton(defaultBtn.btn[0], {
@@ -527,9 +543,9 @@ class Popup {
         color: '#666'
       });
 
-      const icon = this.createStyledElement('span', {});
+      const icon = this.createStyledElement('span', {}, Popup.classNames.message);
 
-      const text = this.createStyledElement('p', {});
+      const text = this.createStyledElement('p', {}, Popup.classNames.content);
 
       if (options.icon === 1) {
         icon.innerText = '√';
@@ -706,6 +722,7 @@ class Popup {
   </svg>`;
       const parser = new DOMParser();
       const svgElement = parser.parseFromString(svgString, 'image/svg+xml').documentElement;
+      svgElement.classList.add(Popup.classNames.loading);
       this.contentBox.appendChild(svgElement);
     });
     // 如果没有正在显示的弹窗，立即显示
@@ -749,20 +766,22 @@ class Popup {
   }
 
   // 设置样式的函数
-  setStyle(ele: HTMLElement, styleObj: BaseStyle): void {
+  setStyle(ele: HTMLElement, styleObj: PopupStyle): void {
     Object.assign(ele.style, styleObj);
   }
 
   createStyledElement<K extends keyof HTMLElementTagNameMap>(
     tag: K,
-    styleObj: BaseStyle = {}
+    styleObj: PopupStyle = {},
+    className = ''
   ): HTMLElementTagNameMap[K] {
     const ele = document.createElement(tag);
+    if (className) ele.className = className;
     this.setStyle(ele, styleObj);
     return ele;
   }
 
-  createButton(text: string, additionalStyles: BaseStyle = {}): HTMLButtonElement {
+  createButton(text: string, additionalStyles: PopupStyle = {}): HTMLButtonElement {
     const btn = this.createStyledElement('button', {
       backgroundColor: '#fff',
       outline: 'none',
@@ -774,7 +793,7 @@ class Popup {
       height: '30px',
       lineHeight: '30px',
       ...additionalStyles
-    });
+    }, Popup.classNames.button);
     btn.innerText = text;
     return btn;
   }

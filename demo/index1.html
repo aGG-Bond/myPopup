@@ -1,35 +1,135 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Popup Component 移动端 Demo & API 文档</title>
   <style>
-    html, body { margin: 0; padding: 0; box-sizing: border-box; background: #f7f7f7; }
-    body { font-family: "PingFang SC", Arial, sans-serif; padding: 16px; }
-    h1 { font-size: 5vw; margin-bottom: 2vw; }
-    h2 { font-size: 4vw; margin-top: 6vw; }
-    .demo-group { margin-bottom: 6vw; display: flex; flex-direction: column; gap: 2vw; }
-    .example { background: #fff; border: 1px solid #ddd; padding: 3vw; margin-bottom: 4vw; border-radius: 3vw; box-shadow: 0 2px 8px rgba(0,0,0,0.03);}
-    .example label { display: block; margin: 2vw 0 1vw 0; font-size: 3vw;}
-    .example input, .example textarea, .example select {
-      width: 100%; font-size: 3vw; padding: 1vw; margin-bottom: 2vw; border-radius: 2vw; border: 1px solid #ccc; box-sizing: border-box;
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background: #f7f7f7;
     }
-    .example textarea { min-height: 8vw; }
-    .example button { padding: 2vw; font-size: 4vw; border-radius: 2vw; border: none; background: #2196f3; color: #fff; margin-top: 2vw;}
-    .example button:active { background: #1976d2; }
-    pre, code { background: #eee; padding: 1vw 2vw; border-radius: 2vw; font-size: 3vw; overflow-x: auto; }
-    .api-table { border-collapse: collapse; width: 100%; font-size: 3vw; margin-top: 2vw; }
-    .api-table th, .api-table td { border: 1px solid #ccc; padding: 2vw 1vw; text-align: left; }
-    .api-table th { background: #e0e0e0; }
+
+    body {
+      font-family: "PingFang SC", Arial, sans-serif;
+      padding: 16px;
+    }
+
+    h1 {
+      font-size: 5vw;
+      margin-bottom: 2vw;
+    }
+
+    h2 {
+      font-size: 4vw;
+      margin-top: 6vw;
+    }
+
+    .demo-group {
+      margin-bottom: 6vw;
+      display: flex;
+      flex-direction: column;
+      gap: 2vw;
+    }
+
+    .example {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 3vw;
+      margin-bottom: 4vw;
+      border-radius: 3vw;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .example label {
+      display: block;
+      margin: 2vw 0 1vw 0;
+      font-size: 3vw;
+    }
+
+    .example input,
+    .example textarea,
+    .example select {
+      width: 100%;
+      font-size: 3vw;
+      padding: 1vw;
+      margin-bottom: 2vw;
+      border-radius: 2vw;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .example textarea {
+      min-height: 8vw;
+    }
+
+    .example button {
+      padding: 2vw;
+      font-size: 4vw;
+      border-radius: 2vw;
+      border: none;
+      background: #2196f3;
+      color: #fff;
+      margin-top: 2vw;
+    }
+
+    .example button:active {
+      background: #1976d2;
+    }
+
+    pre,
+    code {
+      background: #eee;
+      padding: 1vw 2vw;
+      border-radius: 2vw;
+      font-size: 3vw;
+      overflow-x: auto;
+    }
+
+    .api-table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 3vw;
+      margin-top: 2vw;
+    }
+
+    .api-table th,
+    .api-table td {
+      border: 1px solid #ccc;
+      padding: 2vw 1vw;
+      text-align: left;
+    }
+
+    .api-table th {
+      background: #e0e0e0;
+    }
+
     @media (max-width: 500px) {
-      h1 { font-size: 7vw; }
-      h2 { font-size: 5vw; }
-      .example input, .example textarea, .example select { font-size: 4vw; }
-      .api-table { font-size: 4vw; }
+      h1 {
+        font-size: 7vw;
+      }
+
+      h2 {
+        font-size: 5vw;
+      }
+
+      .example input,
+      .example textarea,
+      .example select {
+        font-size: 4vw;
+      }
+
+      .api-table {
+        font-size: 4vw;
+      }
     }
   </style>
 </head>
+
 <body>
   <h1>Popup Component 移动端演示与 API 文档</h1>
 
@@ -242,4 +342,5 @@
     }
   </script>
 </body>
+
 </html>

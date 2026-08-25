@@ -101,6 +101,28 @@ popup.tips({
 - `popup.load(options)`：加载动画弹窗
 - `popup.close()`：关闭弹窗
 
+### 通过 CSS 类名自定义样式
+
+弹窗元素会自动添加带命名空间的 CSS 类名，可以直接在项目样式表中覆盖默认样式：
+
+```css
+.aggb-popup-content-box {
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.aggb-popup-button {
+  color: #1976d2;
+}
+```
+
+可用类名包括：`.aggb-popup-mask`、`.aggb-popup-content-box`、
+`.aggb-popup-title`、`.aggb-popup-content`、`.aggb-popup-close-button`、
+`.aggb-popup-button-box`、`.aggb-popup-button`、`.aggb-popup-image`、
+`.aggb-popup-message` 与 `.aggb-popup-loading`。
+
+类名使用 `aggb-popup-` 命名空间，以降低与宿主项目现有样式冲突的概率。
+
 
 ## 主要参数说明
 
@@ -109,7 +131,7 @@ popup.tips({
   - `content`：弹窗内容（字符串或 HTML）
   - `isTitleBox`：是否显示标题栏（布尔，默认 true）
   - `isCloseSvg`：是否显示右上角关闭 SVG（布尔）
-  - `closeBtnStyle`、`btnStyle`、`contentStyle`、`titleStyle`：样式对象（键值对）
+  - `closeBtnStyle`、`btnStyle`、`contentStyle`、`titleStyle`：样式对象（键值对），也可以优先使用 CSS 类名覆盖
 
 - alert / showBottomPopup
   - `btns`：按钮文字数组
@@ -227,6 +249,7 @@ setTimeout(() => popup.close(), 2000);
 
 ### 参数类型说明
 - 样式相关参数（例如 `closeBtnStyle`、`btnStyle`、`contentStyle`、`titleStyle`、`contentBoxStyle` 等）均为 JS 对象，键为 CSS 属性名（驼峰或短横皆可），值为字符串或数字。
+- TypeScript 用户可以使用源码导出的 `PopupStyle` 类型。
 
 ## 移动端 Demo
 
