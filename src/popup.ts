@@ -73,8 +73,35 @@ class Popup {
     button: 'aggb-popup-button',
     image: 'aggb-popup-image',
     message: 'aggb-popup-message',
-    loading: 'aggb-popup-loading'
+    loading: 'aggb-popup-loading',
+    fadeIn: 'aggb-popup-fade-in',
+    fadeOut: 'aggb-popup-fade-out',
+    slideUp: 'aggb-popup-slide-up',
+    slideDown: 'aggb-popup-slide-down'
   } as const;
+
+  private static animationStylesInjected = false;
+
+  private static injectAnimationStyles(): void {
+    if (Popup.animationStylesInjected) return;
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes aggb-fade-in { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes aggb-fade-out { from { opacity: 1; } to { opacity: 0; } }
+      @keyframes aggb-scale-in { from { opacity: 0; transform: translate(-50%,-50%) scale(0.8); } to { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+      @keyframes aggb-scale-out { from { opacity: 1; transform: translate(-50%,-50%) scale(1); } to { opacity: 0; transform: translate(-50%,-50%) scale(0.8); } }
+      @keyframes aggb-slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+      @keyframes aggb-slide-down { from { transform: translateY(0); } to { transform: translateY(100%); } }
+      .aggb-popup-fade-in { animation: aggb-fade-in 0.2s ease-out; }
+      .aggb-popup-fade-out { animation: aggb-fade-out 0.2s ease-out forwards; }
+      .aggb-popup-content-box.aggb-popup-fade-in { animation: aggb-scale-in 0.25s ease-out; }
+      .aggb-popup-content-box.aggb-popup-fade-out { animation: aggb-scale-out 0.2s ease-out forwards; }
+      .aggb-popup-slide-up { animation: aggb-slide-up 0.3s ease-out; }
+      .aggb-popup-slide-down { animation: aggb-slide-down 0.25s ease-out forwards; }
+    `;
+    document.head.appendChild(style);
+    Popup.animationStylesInjected = true;
+  }
 
   baseMaskStyle: PopupStyle = {
     width: '100%',
@@ -109,6 +136,7 @@ class Popup {
 
   // 构造函数中定义公共要使用的div
   constructor() {
+    Popup.injectAnimationStyles();
     this.mask = document.createElement('div');
     this.mask.className = Popup.classNames.mask;
     this.setStyle(this.mask, this.baseMaskStyle);
@@ -151,6 +179,12 @@ class Popup {
 
     // 将遮罩放在body中显示
     document.body.appendChild(this.mask);
+    this.mask.classList.add(Popup.classNames.fadeIn);
+    this.contentBox.classList.add(Popup.classNames.fadeIn);
+    setTimeout(() => {
+      this.mask.classList.remove(Popup.classNames.fadeIn);
+      this.contentBox.classList.remove(Popup.classNames.fadeIn);
+    }, 250);
 
     // 上面标题部分
     if (isTitleBox) {
@@ -191,9 +225,8 @@ class Popup {
         }, ...closeBtnStyle
       });
 
-      if (isCloseSvg && this.closeBtn) this.contentBox.appendChild(this.closeBtn);
-
-      if (this.closeBtn) {
+      if (isCloseSvg && this.closeBtn) {
+        this.contentBox.appendChild(this.closeBtn);
         this.addClickListeners([this.closeBtn], () => {
           console.log('closePreview');
           closePreview();
@@ -218,6 +251,15 @@ class Popup {
 
   // 弹出提示框
   alert(param: AlertParams): void {
+    this.queue.push(() => {
+      this._alert(param);
+    });
+    if (!this.isShowing) {
+      this.showNext();
+    }
+  }
+
+  private _alert(param: AlertParams): void {
     const { btnStyles, btns = [], callbacks = [] } = param;
     const defaultBtnStyle: PopupStyle = {
       width: '100%',
@@ -253,6 +295,15 @@ class Popup {
 
   // 弹出提示框
   tips(param: TipsParams, cb?: () => void, color: string[] = []): void {
+    this.queue.push(() => {
+      this._tips(param, cb, color);
+    });
+    if (!this.isShowing) {
+      this.showNext();
+    }
+  }
+
+  private _tips(param: TipsParams, cb?: () => void, color: string[] = []): void {
     const affirm = cb && typeof cb === 'function' ? cb : () => { };
     this.middleBox(param);
     const btn = this.createButton('确定', {
@@ -270,6 +321,7 @@ class Popup {
     });
 
     this.setStyle(this.contentBox, {
+      ...this.baseContentBoxStyle,
       backgroundColor: '#fff',
       fontWeight: '700',
       fontSize: '4.266vw',
@@ -296,6 +348,15 @@ class Popup {
 
   // 预览图片框
   showImagePreview({ imgUrl, color, onClose, svgIcon }: ShowImagePreviewParams): void {
+    this.queue.push(() => {
+      this._showImagePreview({ imgUrl, onClose, svgIcon });
+    });
+    if (!this.isShowing) {
+      this.showNext();
+    }
+  }
+
+  private _showImagePreview({ imgUrl, onClose, svgIcon }: ShowImagePreviewParams): void {
     const closePreview = onClose || (() => { });
     this.middleBox({ content: '', isTitleBox: false });
     const image = this.createStyledElement('img', {
@@ -337,6 +398,15 @@ class Popup {
 
   // 底部弹窗
   showBottomPopup(paramObj: ShowBottomPopupParams): void {
+    this.queue.push(() => {
+      this._showBottomPopup(paramObj);
+    });
+    if (!this.isShowing) {
+      this.showNext();
+    }
+  }
+
+  private _showBottomPopup(paramObj: ShowBottomPopupParams): void {
     const {
       title,
       content,
@@ -346,7 +416,7 @@ class Popup {
       titleStyle = {},
       closeBtnStyle = {},
       svgStyle = {},
-      btnBoxStyle = '',
+      btnBoxStyle = {},
       btns = [],
       btnStyle = [],
       addEventListener = () => { },
@@ -366,6 +436,7 @@ class Popup {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
+      transition: 'all 0.5s'
     };
 
     const defaultContentStyle: PopupStyle = {
@@ -375,7 +446,7 @@ class Popup {
       borderRadius: '10px 10px 0 0',
       width: '100%',
       flex: 1,
-      padding: '0 5vw, 5vw',
+      padding: '0 5vw 5vw',
       display: 'flex',
       flexDirection: 'column',
       fontSize: '4vw'
@@ -389,9 +460,15 @@ class Popup {
       color: '#000'
     };
 
-    this.middleBox({ content, title });
+    this.middleBox({ content, title, closeBtnStyle: { ...defaultCloseBtnStyle, ...closeBtnStyle }, closePreview: cancelCallbacks });
 
     this.setStyle(this.contentBox, { ...defaultContentBoxStyle, ...contentBoxStyle });
+
+    this.contentBox.classList.remove(Popup.classNames.fadeIn);
+    this.contentBox.classList.add(Popup.classNames.slideUp);
+    setTimeout(() => {
+      this.contentBox.classList.remove(Popup.classNames.slideUp);
+    }, 300);
 
     if (this.content) {
       this.setStyle(this.content, { ...defaultContentStyle, ...contentStyle });
@@ -399,17 +476,6 @@ class Popup {
 
     if (this.titleDiv) {
       this.setStyle(this.titleDiv, { ...defaultTitleStyle, ...titleStyle });
-    }
-
-    if (this.closeBtn) {
-      this.setStyle(this.closeBtn, { ...defaultCloseBtnStyle, ...closeBtnStyle });
-    }
-
-    if (this.closeBtn) {
-      this.addClickListeners([this.closeBtn], () => {
-        cancelCallbacks();
-        this.close();
-      });
     }
 
     const defaultBtnBoxStyle: PopupStyle = {
@@ -433,7 +499,7 @@ class Popup {
     };
 
     if (btns.length > 0) {
-      const btnBox = this.createStyledElement('div', (typeof btnBoxStyle === 'string') ? defaultBtnBoxStyle : btnBoxStyle, Popup.classNames.buttonBox);
+      const btnBox = this.createStyledElement('div', { ...defaultBtnBoxStyle, ...btnBoxStyle }, Popup.classNames.buttonBox);
       this.contentBox.appendChild(btnBox);
       btns.map((item, index) => {
         const btnItem = this.createButton(item, btnStyle?.[index] || defaultBtnStyle);
@@ -455,30 +521,30 @@ class Popup {
   changeColor(colorArr: string[]): string {
     if (!Array.isArray(colorArr) || colorArr.length === 0) return '#fff';
     if (colorArr.length === 1) return colorArr[0];
-    return `linear-gradient(${colorArr[0]} 0%, ${colorArr[1]} 100%), ${colorArr[1]}`;
+    return `linear-gradient(to right, ${colorArr[0]} 0%, ${colorArr[1]} 100%)`;
   }
 
   confirm(info: ConfirmParams, obj: any, cb1?: () => void, cb2?: () => void): void {
-    // 调用创建中间小div的函数
+    this.queue.push(() => {
+      this._confirm(info, obj, cb1, cb2);
+    });
+    if (!this.isShowing) {
+      this.showNext();
+    }
+  }
+
+  private _confirm(info: ConfirmParams, obj: any, cb1?: () => void, cb2?: () => void): void {
     this.middleBox(info);
-    // this.middleBox({
-    // 	// title: 'Image Preview',
-    // 	content: '',
-    // 	isTitleBox: false
-    // });
+
     this.setStyle(this.contentBox, {
       backgroundColor: '#fff',
       borderRadius: '8px',
       paddingLeft: '0'
     });
 
-    const defaultBtn = { btn: ['确定', '取消'] };
+    const btnTexts: string[] = Array.isArray(obj?.btn) ? obj.btn : ['确定', '取消'];
     const affirm = cb1 && typeof cb1 === 'function' ? cb1 : () => { };
     const cancel = cb2 && typeof cb2 === 'function' ? cb2 : () => { };
-
-    if (obj && typeof obj === 'object') {
-      Object.assign(defaultBtn, obj);
-    }
 
     const btnBox = this.createStyledElement('div', {
       padding: '20px',
@@ -487,11 +553,11 @@ class Popup {
     }, Popup.classNames.buttonBox);
     this.contentBox.appendChild(btnBox);
 
-    const confirmBtn = this.createButton(defaultBtn.btn[0], {
+    const confirmBtn = this.createButton(btnTexts[0], {
       marginLeft: '0',
       background: this.changeColor(obj?.color || [])
     });
-    const cancelBtn = this.createButton(defaultBtn.btn[1], {
+    const cancelBtn = this.createButton(btnTexts[1], {
       marginLeft: '10px',
       outline: 'none',
       border: '1px solid #ccc',
@@ -517,6 +583,8 @@ class Popup {
     console.log('queue-msg', this.queue);
     this.queue.push(() => {
       this.contentBox.innerHTML = '';
+      this.contentBox.style.cssText = '';
+      this.setStyle(this.contentBox, this.baseContentBoxStyle);
       let content = '默认提示内容';
       let options: MsgParams = { time: 1000 };
 
@@ -529,9 +597,17 @@ class Popup {
 
       // 将遮罩放在body中显示
       document.body.appendChild(this.mask);
+      this.mask.classList.add(Popup.classNames.fadeIn);
+      this.contentBox.classList.add(Popup.classNames.fadeIn);
+      setTimeout(() => {
+        this.mask.classList.remove(Popup.classNames.fadeIn);
+        this.contentBox.classList.remove(Popup.classNames.fadeIn);
+      }, 250);
       // 给遮罩中间的div设置样式
       this.setStyle(this.contentBox, {
         width: 'auto',
+        minWidth: 'auto',
+        maxWidth: '90vw',
         backgroundColor: 'rgb(255, 255, 255)',
         boxShadow: '0 0 2px #999',
         position: 'absolute',
@@ -545,7 +621,11 @@ class Popup {
 
       const icon = this.createStyledElement('span', {}, Popup.classNames.message);
 
-      const text = this.createStyledElement('p', {}, Popup.classNames.content);
+      const text = this.createStyledElement('p', {
+        margin: 0,
+        padding: 0,
+        display: 'inline'
+      }, Popup.classNames.content);
 
       if (options.icon === 1) {
         icon.innerText = '√';
@@ -563,7 +643,6 @@ class Popup {
           fontWeight: 'bold'
         });
       } else if (options.icon === 0) {
-        // 给icon设置内容和样式
         icon.innerText = '×';
         this.setStyle(icon, {
           width: '30px',
@@ -592,7 +671,7 @@ class Popup {
           top: '50%',
           transform: 'translate(-50%, -50%)',
           borderRadius: '3px',
-          padding: '10px 30px',
+          padding: '10px 20px',
           color: '#fff',
           wordWrap: 'break-word',
           textAlign: 'center'
@@ -633,8 +712,16 @@ class Popup {
 
     this.queue.push(() => {
       this.contentBox.innerHTML = '';
+      this.contentBox.style.cssText = '';
+      this.setStyle(this.contentBox, this.baseContentBoxStyle);
       // 将遮罩放到body中显示
       document.body.appendChild(this.mask);
+      this.mask.classList.add(Popup.classNames.fadeIn);
+      this.contentBox.classList.add(Popup.classNames.fadeIn);
+      setTimeout(() => {
+        this.mask.classList.remove(Popup.classNames.fadeIn);
+        this.contentBox.classList.remove(Popup.classNames.fadeIn);
+      }, 250);
       // 给中间的小div设置样式
       this.setStyle(this.contentBox, {
         border: 'none',
@@ -655,7 +742,7 @@ class Popup {
       };
 
       styleObj = { ...styleObj, ...paramObj };
-      const size = (styleObj.width || 0) - (styleObj.height || 0) > 0 ? styleObj.width : styleObj.height;
+      const size = Math.max(styleObj.width || 0, styleObj.height || 0) || 100;
       const { color = '#201c1d' } = styleObj;
       const svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"  preserveAspectRatio="xMidYMid" width="${size}" height="${size}" style="shape-rendering: auto; display: block;">
     <g data-idx="1">
@@ -734,14 +821,25 @@ class Popup {
   close(form: number | string = ''): void {
     console.log('close', form);
     if (this.mask.parentElement) {
-      document.body.removeChild(this.mask);
-      this.contentBox.innerHTML = '';
-    }
-    // 关闭后显示下一个弹窗
-    this.isShowing = false;
-    this.showNext();
+      const isBottomPopup = this.contentBox.style.bottom === '0px' || this.contentBox.style.bottom === '0';
+      const maskAnim = Popup.classNames.fadeOut;
+      const contentAnim = isBottomPopup ? Popup.classNames.slideDown : Popup.classNames.fadeOut;
 
-    this.removeEventListeners();
+      this.mask.classList.add(maskAnim);
+      this.contentBox.classList.add(contentAnim);
+
+      setTimeout(() => {
+        if (this.mask.parentElement) {
+          document.body.removeChild(this.mask);
+        }
+        this.mask.classList.remove(maskAnim);
+        this.contentBox.classList.remove(contentAnim);
+        this.contentBox.innerHTML = '';
+        this.isShowing = false;
+        this.removeEventListeners();
+        this.showNext();
+      }, 200);
+    }
   }
 
   debounce<T extends (...args: any[]) => any>(func: T, delay: number, immediate: boolean = false): (...args: Parameters<T>) => void {
