@@ -518,6 +518,78 @@ class Popup {
     addEventListener();
   }
 
+  // 切换已打开弹窗的内容（不触发动画）
+  switchContent(params: {
+    title?: string;
+    content?: string;
+    btns?: string[];
+    callbacks?: Array<() => boolean | void>;
+    btnStyle?: PopupStyle[];
+  }): void {
+    if (!this.isShowing) return;
+
+    const { title, content, btns, callbacks, btnStyle } = params;
+
+    // 更新标题
+    if (title !== undefined && this.titleDiv) {
+      this.titleDiv.textContent = title;
+    }
+
+    // 更新内容
+    if (content !== undefined && this.content) {
+      this.content.innerHTML = content;
+    }
+
+    // 更新按钮
+    if (btns && btns.length > 0) {
+      // 只移除底部按钮的事件监听，保留关闭按钮的监听
+      const btnBox = this.contentBox.querySelector(`.${Popup.classNames.buttonBox}`);
+      if (btnBox) {
+        // 移除旧按钮的事件监听
+        const oldButtons = btnBox.querySelectorAll(`.${Popup.classNames.button}`);
+        oldButtons.forEach(btn => {
+          this.eventListeners = this.eventListeners.filter(listener => {
+            if (listener.element === btn) {
+              btn.removeEventListener('click', listener.callback);
+              return false;
+            }
+            return true;
+          });
+        });
+
+        btnBox.innerHTML = '';
+
+        const defaultBtnStyle: PopupStyle = {
+          width: '100%',
+          height: '40px',
+          lineHeight: '40px',
+          outline: 'none',
+          border: 'none',
+          color: '#000',
+          fontSize: '16px',
+          padding: '0 10px',
+          borderTop: '1px solid #ccc',
+          borderRadius: '0 0 10px 10px'
+        };
+
+        // 创建新按钮并绑定回调
+        btns.forEach((text, index) => {
+          const btnItem = this.createButton(text, btnStyle?.[index] || defaultBtnStyle);
+          btnBox.appendChild(btnItem);
+          this.addClickListeners([btnItem], () => {
+            const callback = callbacks?.[index];
+            if (callback) {
+              const result = callback();
+              if (result !== false) this.close();
+            } else {
+              this.close();
+            }
+          });
+        });
+      }
+    }
+  }
+
   changeColor(colorArr: string[]): string {
     if (!Array.isArray(colorArr) || colorArr.length === 0) return '#fff';
     if (colorArr.length === 1) return colorArr[0];
